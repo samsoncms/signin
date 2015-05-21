@@ -1,6 +1,6 @@
 {
-  "name": "samsonos/cms_app_signin",
-  "description": "SamsonCMS Sign In",
+  "name": "samsoncms/signin",
+  "description": "SamsonCMS signin application",
   "author": "Olexandr Nazarenko <nazarenko@samsonos.com>",
   "require": {
     "samsoncms/application": "*",
