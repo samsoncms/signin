@@ -20,7 +20,7 @@
   "autoload": {
     "classmap": ["src/"],
     "psr-4": {
-      "samsoncms\\app\\signin": "src/"
+      "samsoncms\\app\\signin\\": "src/"
     }
   },
   "config": {
