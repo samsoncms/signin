@@ -11,7 +11,7 @@
     <form method="POST" action="<?php url_base('signin/login'); ?>" class="form-signin main-form recovery <?php iv('errorClass') ?>" role="form">
         <h2 class="form-signin-heading"><?php t('Авторизация') ?></h2>
         <input type="email" name="email" class="form-control" placeholder="<?php t('Email') ?>" value="<?php iv('userEmail') ?>" required="">
-        <input type="password" name="password" class="form-control" placeholder="<?php t('Пароль') ?>" required="">
+        <input type="password" name="password" class="form-control" <?php iv('focus') ?> placeholder="<?php t('Пароль') ?>" required="">
         <label class="checkbox">
             <input type="checkbox" name="remember"> <?php t('Запомнить меня') ?>
         </label>
