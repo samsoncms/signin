@@ -71,13 +71,17 @@ class Application extends \samson\core\CompressableExternalModule
                     Event::fire('samson.cms.signin.login', array(& $user));
                     return array('status' => '1');
                 } else {
-                    $error .= m()->view('www/signin/signin_form.vphp')->errorClass('errorAuth')->output();
+                    $error .= m()->view('www/signin/signin_form.vphp')
+                        ->focus('autofocus')
+                        ->errorClass('errorAuth')
+                        ->output();
                     return array('status' => '0', 'html' => $error);
                 }
             } else {
                 $error .= m()->view('www/signin/signin_form.vphp')
                     ->errorClass('errorAuth')
                     ->userEmail("{$_POST['email']}")
+                    ->focus('autofocus')
                     ->output();
                 return array('status' => '0', 'html' => $error);
             }
