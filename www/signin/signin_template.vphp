@@ -11,7 +11,7 @@
 
     <body id="<?php v('id'); ?>" class="signin">
 
-        <input id="signin_redirect_url" type="hidden" value="<?php echo m('cms')->baseUrl?>">
+        <input id="signin_redirect_url" type="hidden" value="<?php echo __SAMSON_BASE__?>">
 
         <div class="container">
             <?php m()->render() ?>
