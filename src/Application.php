@@ -17,24 +17,34 @@ use samsonphp\event\Event;
 class Application extends \samson\core\CompressableExternalModule
 {
 
-    public $id = 'signin';
+    public $id = 'cms-signin';
 
-    public static function authorize()
+    public function init( array $params = array() ) {
+        // Call parent initialization
+        return parent::init( $params );
+    }
+
+    public function authorize($social)
     {
-        if (!m('social')->authorized()) {
-            if (!m('socialemail')->cookieVerification()) {
-                if (!url()->is('signin')) {
-                    url()->redirect('/signin');
+        if (m('cms')->isCMS()) {
+            if ($social->id == 'socialemail') {
+                if (!m('social')->authorized()) {
+                    if (!m('socialemail')->cookieVerification()) {
+                        if (!url()->is('cms-signin')) {
+                            url()->redirect('/cms/signin');
+                        }
+                    } else {
+                        url()->redirect('/cms/signin');
+                    }
+                } else {
+                    if (url()->is('cms-signin')) {
+                        url()->redirect('/cms');
+                    }
                 }
-            } else {
-                url()->redirect('/signin');
-            }
-        } else {
-            if (url()->is('signin')) {
-                url()->redirect();
             }
         }
     }
+
 
 
     /** Check the user's authorization */
@@ -98,7 +108,7 @@ class Application extends \samson\core\CompressableExternalModule
         m('socialemail')->deauthorize();
         // Fire logout event
         Event::fire('samson.cms.signin.logout');
-        url()->redirect();
+        //url()->redirect();
     }
 
     /** Sending email with the correct address */
