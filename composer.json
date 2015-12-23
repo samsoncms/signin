@@ -6,7 +6,8 @@
     "samsoncms/application": "*",
     "samsonos/php_email": "*",
     "samsonos/social_core": "*",
-    "samsonos/social_email": "*"
+    "samsonos/social_email": "*",
+    "samsonos/js_core": "*"
   },
   "require-dev": {
     "behat/behat": "3.*@stable",
