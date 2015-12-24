@@ -16,13 +16,8 @@ use samsonphp\event\Event;
  */
 class Application extends \samson\core\CompressableExternalModule
 {
-
+    /** @var string Identifier */
     public $id = 'cms-signin';
-
-    public function init( array $params = array() ) {
-        // Call parent initialization
-        return parent::init( $params );
-    }
 
     public function authorize($social)
     {
@@ -45,12 +40,10 @@ class Application extends \samson\core\CompressableExternalModule
         }
     }
 
-
-
     /** Check the user's authorization */
     public function __HANDLER()
     {
-        self::authorize();
+        $this->authorize();
     }
 
     /** Main sign in template */

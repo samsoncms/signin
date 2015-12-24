@@ -8,7 +8,7 @@
 ?>
 
 <div class="form-container form-signin">
-    <form method="POST" action="<?php url_base('signin/login'); ?>" class="form-signin main-form recovery <?php iv('errorClass') ?>" role="form">
+    <form method="POST" action="<?php module_url('login'); ?>" class="form-signin main-form recovery <?php iv('errorClass') ?>" role="form">
         <h2 class="form-signin-heading"><?php t('Авторизация') ?></h2>
         <input type="email" name="email" class="form-control" placeholder="<?php t('Email') ?>" value="<?php iv('userEmail') ?>" required="">
         <input type="password" name="password" class="form-control" <?php iv('focus') ?> placeholder="<?php t('Пароль') ?>" required="">
@@ -22,7 +22,7 @@
 </div>
 
 <div class="form-container form-recovery">
-    <form class="signin-pages" method="post" action="<?php url_base('signin', 'mail') ?>">
+    <form class="signin-pages" method="post" action="<?php module_url('mail') ?>">
         <fieldset>
             <h2><?php t('Восстановление пароля') ?></h2>
             <input type="email" class="input-medium form-control recovery-email" placeholder="<?php t('Введите Ваш Email') ?>" name="email" required>
