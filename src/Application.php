@@ -6,8 +6,12 @@
  * Time: 11:43
  */
 namespace samsoncms\app\signin;
+
+use samson\activerecord\dbQuery;
 use samson\social\email\EmailStatus;
 use samsonphp\event\Event;
+use samsonframework\orm\QueryInterface;
+use samson\social\email\Email;
 
 /**
  * Generic class for user sign in
@@ -18,6 +22,12 @@ class Application extends \samson\core\CompressableExternalModule
 {
     /** @var string Identifier */
     public $id = 'cms-signin';
+
+    /** @var Email Pointer to social email module */
+    protected $social;
+
+    /** @var QueryInterface Databvase query instance */
+    protected $query;
 
     public function authorize($social)
     {
@@ -40,57 +50,96 @@ class Application extends \samson\core\CompressableExternalModule
         }
     }
 
+    /**
+     * Application constructor.
+     *
+     * @param string $path
+     * @param null $vid
+     * @param null $resources
+     */
+    public function  __construct($path, $vid = null, $resources = NULL )
+    {
+        // Inject dependencies
+        $this->social = m('socialemail');
+        $this->query = new dbQuery();
+
+        parent::__construct($path, $vid, $resources);
+    }
+
+    //[PHPCOMPRESSOR(remove,start)]
+    /** Module preparation */
+    public function prepare()
+    {
+        // Create default user for first logins
+        $adminUser = 'admin@admin.com';
+        $hashedEmailValue = $this->social->hash($adminUser);
+
+        // Try to find generic user
+        $admin = $this->query
+            ->entity($this->social->dbTable)
+            ->where($this->social->dbEmailField, $adminUser)
+            ->first();
+
+        // Create user record if missing
+        if (!isset($admin)) {
+             $admin = new $this->social->dbTable();
+        }
+
+        // Fill in user credentials according to config
+        $admin[$this->social->dbEmailField] = $adminUser;
+        $admin[$this->social->dbHashEmailField] = $hashedEmailValue;
+        $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
+        $admin->save();
+    }
+    //[PHPCOMPRESSOR(remove,end)]
+
     /** Check the user's authorization */
     public function __HANDLER()
     {
-        $this->authorize();
+        $this->authorize($this->social);
     }
 
     /** Main sign in template */
     public function __base()
     {
-        // m('social')->prepare();
+        // Change template
         s()->template('www/signin/signin_template.vphp');
-        $result = '';
-        $result .= m()->view('www/signin/signin_form.vphp')->output();
-        m()->html($result)->title(t('Авторизация', true));
+
+        // Render template with sign in form
+        $this->html($this->view('www/signin/signin_form.vphp')->output())
+            ->title(t('Авторизация', true));
     }
 
     /** User asynchronous sign in */
     public function __async_login()
     {
         $user = null;
-        $remember = false;
         $error = '';
+
         if (isset($_POST['email']) && isset($_POST['password'])) {
-            $email = md5($_POST['email']);
-            $password = md5($_POST['password']);
-            if (isset($_POST['remember'])) {
-                $remember = true;
-            }
-            $auth = m('socialemail')->authorizeWithEmail($email, $password, $remember, $user);
-            if ($auth->code == EmailStatus::SUCCESS_EMAIL_AUTHORIZE) {
-                if (dbQuery('user')->cond('user_id', $user->id)->first()) {
-                    // Fire login success event
-                    Event::fire('samson.cms.signin.login', array(& $user));
-                    return array('status' => '1');
-                } else {
-                    $error .= m()->view('www/signin/signin_form.vphp')
-                        ->focus('autofocus')
-                        ->errorClass('errorAuth')
-                        ->output();
-                    return array('status' => '0', 'html' => $error);
-                }
+            $email = $this->social->hash($_POST['email']);
+            $password = $this->social->hash($_POST['password']);
+            $remember = isset($_POST['remember']) ? true : false;
+
+            /** @var EmailStatus Perform email authorization */
+            $auth = $this->social->authorizeWithEmail($email, $password, $remember, $user);
+
+            if ($auth->code === EmailStatus::SUCCESS_EMAIL_AUTHORIZE) {
+                // Fire login success event
+                Event::fire('samson.cms.signin.login', array(&$user));
+
+                return array('status' => '1');
             } else {
-                $error .= m()->view('www/signin/signin_form.vphp')
+                $error .= $this->view('www/signin/signin_form.vphp')
                     ->errorClass('errorAuth')
                     ->userEmail("{$_POST['email']}")
                     ->focus('autofocus')
                     ->output();
+
                 return array('status' => '0', 'html' => $error);
             }
         } else {
-            $error .= m()->view('www/signin/signin_form')->errorClass('errorAuth')->output();
+            $error .= $this->view('www/signin/signin_form')->errorClass('errorAuth')->output();
             return array('status' => '0', 'html' => $error);
         }
     }
@@ -98,10 +147,12 @@ class Application extends \samson\core\CompressableExternalModule
     /** User logout */
     public function __logout()
     {
-        m('socialemail')->deauthorize();
+        $this->social->deauthorize();
+
         // Fire logout event
         Event::fire('samson.cms.signin.logout');
-        //url()->redirect();
+
+        url()->redirect('cms/signin');
     }
 
     /** Sending email with the correct address */
@@ -111,16 +162,16 @@ class Application extends \samson\core\CompressableExternalModule
             /** @var \samson\activerecord\user $user */
             $user = null;
             $result = '';
-            if (dbQuery('user')->email($_POST['email'])->first($user)) {
-                $user->confirmed = md5(generate_password(20) . time());
+            if (dbQuery('user')->where('email', $_POST['email'])->first($user)) {
+                $user->confirmed = $this->social->hash(generate_password(20) . time());
                 $user->save();
-                $message = m()->view('www/signin/email/pass_recovery')->code($user->confirmed)->output();
+                $message = $this->view('www/signin/email/pass_recovery')->code($user->confirmed)->output();
 
                 mail_send($user->Email, 'info@samsonos.com', $message, t('Восстановление пароля!', true), 'SamsonCMS');
 
-                $result .= m()->view('www/signin/pass_recovery_mailsend')->output();
+                $result .= $this->view('www/signin/pass_recovery_mailsend')->output();
                 s()->template('www/signin/signin_template.vphp');
-                m()->html($result)->title(t('Восстановление пароля', true));
+                $this->html($result)->title(t('Восстановление пароля', true));
             } else {
                 url()->redirect();
             }
@@ -130,18 +181,19 @@ class Application extends \samson\core\CompressableExternalModule
     }
 
     /**
-     * New password form
+     * New password form.
+     *
      * @param string $code Code password recovery
      */
     public function __confirm($code)
     {
-        if (dbQuery('user')->confirmed($code)->first()) {
+        if (dbQuery('user')->where($this->social->dbConfirmField, $code)->first()) {
             $result = '';
             $result .= m()->view('www/signin/new_pass_form')->code($code)->output();
             s()->template('www/signin/signin_template.vphp');
             m()->html($result)->title(t('Восстановление пароля', true));
         } else {
-            e404();
+            return A_FAILED;
         }
     }
 
