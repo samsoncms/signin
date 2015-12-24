@@ -34,6 +34,9 @@ class Application extends \samson\core\CompressableExternalModule
     /** @var QueryInterface Database query instance */
     protected $query;
 
+    /** @var RequestInterface Request instance */
+    protected $request;
+
     public function authorize($social)
     {
         if (m('cms')->isCMS()) {
@@ -59,16 +62,17 @@ class Application extends \samson\core\CompressableExternalModule
      * Application constructor.
      *
      * @param string $path
-     * @param null $vid
-     * @param null $resources
+     * @param ResourcesInterface $resources
+     * @param SystemInterface $system
      */
-    public function  __construct($path, ResourcesInterface $resources, SystemInterface $system, RequestInterface $request)
+    public function  __construct($path, ResourcesInterface $resources, SystemInterface $system)
     {
         // Inject dependencies
         $this->social = m('socialemail');
+        $this->request = url();
         $this->query = new dbQuery();
 
-        parent::__construct($path, $resources, $system, $request);
+        parent::__construct($path, $resources, $system);
     }
 
     //[PHPCOMPRESSOR(remove,start)]
