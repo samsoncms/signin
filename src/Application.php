@@ -15,7 +15,6 @@ use samsonframework\core\SystemInterface;
 use samsonphp\event\Event;
 use samsonframework\orm\QueryInterface;
 use samson\social\email\Email;
-use samson\core\URL;
 use samson\core\Core;
 
 /**
