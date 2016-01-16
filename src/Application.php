@@ -58,7 +58,7 @@ class Application extends \samson\core\CompressableExternalModule
 
     public function init(array $params = array())
     {
-        //trace('cmsInit');
+        $this->request = url();
         // Old applications main page rendering
         Event::subscribe(\samsoncms\cms\Application::EVENT_IS_CMS, array($this, 'authorize'));
 
