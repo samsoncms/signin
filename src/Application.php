@@ -43,14 +43,14 @@ class Application extends \samson\core\CompressableExternalModule
             if ( ! $this->social->authorized()) {
                 if ( ! $this->social->cookieVerification()) {
                     if ( ! $this->request->is('signin')) {
-                        $this->request->redirect('/'.$cms->id.'/signin');
+                        $this->request->redirect('/'.$cms->baseUrl.'/signin');
                     }
                 } else {
-                    $this->request->redirect('/'.$cms->id.'/signin');
+                    $this->request->redirect('/'.$cms->baseUrl.'/signin');
                 }
             } else {
                 if ($this->request->is('signin')) {
-                    $this->request->redirect('/'.$cms->id);
+                    $this->request->redirect('/'.$cms->baseUrl);
                 }
             }
         }
