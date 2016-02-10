@@ -10,7 +10,7 @@ class Dictionary implements IDictionary
         return array(
             "en" => array(
                 "Авторизация" => "Sign in",
-                "Войти" => "Come in",
+                "Войти" => "Login",
                 "Запомнить меня" => "Remember me",
                 "Восстановление пароля" => "Recovery password",
                 "Отправить" => "Send",
