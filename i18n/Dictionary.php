@@ -11,6 +11,7 @@ class Dictionary implements IDictionary
             "en" => array(
                 "Авторизация" => "Sign in",
                 "Войти" => "Login",
+                "Пароль" => "Password",
                 "Запомнить меня" => "Remember me",
                 "Восстановление пароля" => "Recovery password",
                 "Отправить" => "Send",
