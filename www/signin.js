@@ -6,8 +6,6 @@ s('.main-form').pageInit(function(form){
     var preloader = s('.preloader_container');
     var button = s('button.btn-signin');
     form.ajaxSubmit(function(response){
-        preloader.show();
-        button.hide();
         if(response.status == '0'){
             s('div.container','body#signin').html();
             s('div.container','body#signin').html(response['html']);
@@ -16,10 +14,12 @@ s('.main-form').pageInit(function(form){
             preloader.hide();
             button.show();
         } else {
-            preloader.hide();
-            button.show();
             document.location.href = s('#signin_redirect_url').val();
         }
+    }, function(){
+        button.hide();
+        preloader.show();
+        return true;
     });
 });
 
@@ -34,8 +34,6 @@ function formSubm(){
     var button = s('button.btn-signin');
     list();
     form.ajaxSubmit(function(response){
-        preloader.show();
-        button.hide();
         if(response.status == '0'){
             s('div.container','body#signin').html();
             s('div.container','body#signin').html(response['html']);
@@ -44,10 +42,12 @@ function formSubm(){
             preloader.hide();
             button.show();
         } else {
-            preloader.hide();
-            button.show();
             document.location.href = s('#signin_redirect_url').val();
         }
+    }, function(){
+        button.hide();
+        preloader.show();
+        return true;
     });
 }
 
