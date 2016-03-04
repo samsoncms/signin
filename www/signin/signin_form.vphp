@@ -16,7 +16,7 @@
             <input type="checkbox" name="remember"> <?php t('Запомнить меня') ?>
         </label>
         <a class="passrecovery"><?php t('Восстановление пароля') ?></a>
-        <div class="preloader_container"><div class="preloader"></div></div>
+        <div class="preloader_container"><div class="preloader"><img src="<?php src('www/img/ajax_loader_1.gif', 'signin') ?>" alt=""></div></div>
         <button name="btn-signin" class="btn btn-lg btn-signin btn-block" type="submit"><?php t('Войти') ?></button>
     </form>
 </div>
