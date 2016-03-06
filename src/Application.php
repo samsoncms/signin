@@ -91,7 +91,7 @@ class Application extends \samson\core\CompressableExternalModule
         $adminUser        = 'admin@admin.com';
         $hashedEmailValue = $this->social->hash($adminUser);
 
-        // Try to find generic user
+        /** @var \samson\activerecord\user $admin Try to find generic user */
         $admin = $this->query
             ->entity($this->social->dbTable)
             ->where($this->social->dbEmailField, $adminUser)
@@ -106,6 +106,7 @@ class Application extends \samson\core\CompressableExternalModule
         $admin[$this->social->dbEmailField]        = $adminUser;
         $admin[$this->social->dbHashEmailField]    = $hashedEmailValue;
         $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
+        $admin->group_id = 1;
         $admin->save();
     }
     //[PHPCOMPRESSOR(remove,end)]
