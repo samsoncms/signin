@@ -75,12 +75,12 @@ class Application extends \samson\core\CompressableExternalModule
      */
     public function  __construct($path, ResourcesInterface $resources, SystemInterface $system)
     {
-        // Inject dependencies
-        $this->social  = m('socialemail');
-        $this->request = url();
-        $this->query   = new dbQuery();
-
         parent::__construct($path, $resources, $system);
+
+        // Inject dependencies
+        $this->social  = $this->system->module('socialemail');
+        $this->request = $this->system->module('url');
+        $this->query   = new dbQuery();
     }
 
     //[PHPCOMPRESSOR(remove,start)]

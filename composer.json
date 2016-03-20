@@ -5,6 +5,7 @@
   "require": {
     "samsoncms/application": "*",
     "samsonos/php_email": "*",
+    "samsonos/php_url": "*",
     "samsonos/social_core": "*",
     "samsonos/social_email": "*",
     "samsonos/js_core": "*"
