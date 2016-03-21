@@ -79,7 +79,7 @@ class Application extends \samson\core\CompressableExternalModule
 
         // Inject dependencies
         $this->social  = $this->system->module('socialemail');
-        $this->request = $this->system->module('url');
+        $this->request = $this->system->module('samsonosphp_url');
         $this->query   = new dbQuery();
     }
 
