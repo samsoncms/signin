@@ -62,6 +62,23 @@ class Application extends \samson\core\CompressableExternalModule
         // Old applications main page rendering
         Event::subscribe(\samsoncms\cms\Application::EVENT_IS_CMS, array($this, 'authorize'));
 
+        //[PHPCOMPRESSOR(remove,start)]
+
+        $moduleList = array();
+        foreach ($this->system->module_stack as $id => $module)
+        {
+            if(isset($module->composerParameters['composerName'])) {
+                if (in_array($module->composerParameters['composerName'], $this->composerParameters['required'])){
+                    $moduleList[$id] = $module;
+                }
+            }
+        }
+        $moduleList[$this->id] = $this;
+
+        // Generate resources for new module
+        $this->system->module('resourcer')->generateResources($moduleList, $this->path() . 'www/signin/signin_template.vphp');
+        //[PHPCOMPRESSOR(remove,end)]
+
         // Call parent initialization
         return parent::init($params);
     }
@@ -107,6 +124,8 @@ class Application extends \samson\core\CompressableExternalModule
         $admin[$this->social->dbHashEmailField]    = $hashedEmailValue;
         $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
         $admin->group_id = 1;
+        $admin->created = date('Y-m-d H:i:s');
+        $admin->active = 1;
         $admin->save();
     }
     //[PHPCOMPRESSOR(remove,end)]
