@@ -59,9 +59,11 @@ function formShake(){
     container.css('left', '20px');
     container.animate(40, 'left', '50', function(){
         container.animate(0, 'left', '25', function(){
-            container.animate(40, 'left', '25', function(){
+            container.animate(40, 'left', '50', function(){
                 container.animate(0, 'left', '25', function(){
-                    container.animate(20, 'left', '50');
+                    container.animate(20, 'left', '50', function(){
+                        s('.form-container.form-signin').addClass('left-non');
+                    });
                 });
             });
         });
