@@ -10,6 +10,7 @@ namespace samsoncms\app\signin;
 use samson\activerecord\dbQuery;
 use samson\cms\CMS;
 use samson\social\email\EmailStatus;
+use samsoncms\api\generated\UserQuery;
 use samsonframework\core\RequestInterface;
 use samsonframework\core\ResourcesInterface;
 use samsonframework\core\SystemInterface;
@@ -200,12 +201,13 @@ class Application extends \samson\core\CompressableExternalModule
             /** @var \samson\activerecord\user $user */
             $user   = null;
             $result = '';
-            if ($this->query->entity('user')->where('email', $_POST['email'])->first($user)) {
+
+            if (!empty($user = (new UserQuery())->email($_POST['email'])->first())) {
                 $user->confirmed = $this->social->hash(generate_password(20) . time());
                 $user->save();
-                $message = $this->view('www/signin/email/pass_recovery')->code($user->confirmed)->output();
 
-                mail_send($user->Email, 'info@samsonos.com', $message, t('Восстановление пароля!', true), 'SamsonCMS');
+                $message = $this->view('www/signin/email/pass_recovery')->code($user->confirmed)->output();
+                mail_send($user->email, 'info@samsonos.com', $message, t('Восстановление пароля!', true), 'SamsonCMS');
 
                 $result .= $this->view('www/signin/pass_recovery_mailsend')->output();
                 $this->system->template('www/signin/signin_template.vphp');
@@ -227,10 +229,12 @@ class Application extends \samson\core\CompressableExternalModule
      */
     public function __confirm($code)
     {
-        if ($this->query->entity('user')->where($this->social->dbConfirmField, $code)->first()) {
-            $this->system->template('www/signin/signin_template.vphp');
+        $rights = (new UserQuery())->hashConfirm($code)->first();
+      
+        if (!empty($rights)) {
+            //$this->system->template('www/signin/signin_template.vphp');
             $this->html($this->view('www/signin/new_pass_form')->code($code)->output())
-                 ->title(t('Восстановление пароля', true));
+                ->title(t('Восстановление пароля', true));
         } else {
             return A_FAILED;
         }
@@ -248,10 +252,10 @@ class Application extends \samson\core\CompressableExternalModule
         ) {
             /** @var \samson\activerecord\user $user */
             $user = null;
-            if ($this->query->where('confirmed', $code)->first($user)) {
-                $user->confirmed    = 1;
+            if (!empty($user = (new UserQuery())->hashConfirm($code)->first())) {
+                $user->confirmed = 1;
                 $user->md5_password = md5($_POST['password']);
-                $user->Password     = $_POST['password'];
+                $user->hash_password = md5($_POST['password']);
                 $user->save();
 
                 $auth = $this->social->authorizeWithEmail($user->md5_email, $user->md5_password, $user);
@@ -262,8 +266,8 @@ class Application extends \samson\core\CompressableExternalModule
         } else {
             $result = '';
             $result .= m()->view('www/signin/pass_error')
-                          ->message(t('Вы ввели некорректный пароль либо пароли не совпадают', true))
-                          ->output();
+                ->message(t('Вы ввели некорректный пароль либо пароли не совпадают', true))
+                ->output();
             $this->system->template('www/signin/signin_template.vphp');
             $this->html($result)->title(t('Ошибка восстановление пароля', true));
         }
