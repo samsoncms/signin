@@ -41,17 +41,17 @@ class Application extends \samson\core\CompressableExternalModule
     public function authorize($cms)
     {
         if ($cms->isCMS()) {
-            if ( ! $this->social->authorized()) {
-                if ( ! $this->social->cookieVerification()) {
-                    if ( ! $this->request->is('signin')) {
-                        $this->request->redirect('/'.$cms->baseUrl.'/signin');
+            if (!$this->social->authorized()) {
+                if (!$this->social->cookieVerification()) {
+                    if (!$this->request->is('signin')) {
+                        $this->request->redirect('/' . $cms->baseUrl . '/signin');
                     }
                 } else {
-                    $this->request->redirect('/'.$cms->baseUrl.'/signin');
+                    $this->request->redirect('/' . $cms->baseUrl . '/signin');
                 }
             } else {
                 if ($this->request->is('signin')) {
-                    $this->request->redirect('/'.$cms->baseUrl);
+                    $this->request->redirect('/' . $cms->baseUrl);
                 }
             }
         }
@@ -66,10 +66,9 @@ class Application extends \samson\core\CompressableExternalModule
         //[PHPCOMPRESSOR(remove,start)]
 
         $moduleList = array();
-        foreach ($this->system->module_stack as $id => $module)
-        {
-            if(isset($module->composerParameters['composerName'])) {
-                if (in_array($module->composerParameters['composerName'], $this->composerParameters['required'])){
+        foreach ($this->system->module_stack as $id => $module) {
+            if (isset($module->composerParameters['composerName'])) {
+                if (in_array($module->composerParameters['composerName'], $this->composerParameters['required'])) {
                     $moduleList[$id] = $module;
                 }
             }
@@ -91,14 +90,14 @@ class Application extends \samson\core\CompressableExternalModule
      * @param ResourcesInterface $resources
      * @param SystemInterface $system
      */
-    public function  __construct($path, ResourcesInterface $resources, SystemInterface $system)
+    public function __construct($path, ResourcesInterface $resources, SystemInterface $system)
     {
         parent::__construct($path, $resources, $system);
 
         // Inject dependencies
-        $this->social  = $this->system->module('socialemail');
+        $this->social = $this->system->module('socialemail');
         $this->request = $this->system->module('samsonosphp_url');
-        $this->query   = new dbQuery();
+        $this->query = new dbQuery();
     }
 
     //[PHPCOMPRESSOR(remove,start)]
@@ -106,7 +105,7 @@ class Application extends \samson\core\CompressableExternalModule
     public function prepare()
     {
         // Create default user for first logins
-        $adminUser        = 'admin@admin.com';
+        $adminUser = 'admin@admin.com';
         $hashedEmailValue = $this->social->hash($adminUser);
 
         /** @var \samson\activerecord\user $admin Try to find generic user */
@@ -116,13 +115,13 @@ class Application extends \samson\core\CompressableExternalModule
             ->first();
 
         // Create user record if missing
-        if ( ! isset($admin)) {
+        if (!isset($admin)) {
             $admin = new $this->social->dbTable();
         }
 
         // Fill in user credentials according to config
-        $admin[$this->social->dbEmailField]        = $adminUser;
-        $admin[$this->social->dbHashEmailField]    = $hashedEmailValue;
+        $admin[$this->social->dbEmailField] = $adminUser;
+        $admin[$this->social->dbHashEmailField] = $hashedEmailValue;
         $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
         $admin->group_id = 1;
         $admin->created = date('Y-m-d H:i:s');
@@ -145,17 +144,17 @@ class Application extends \samson\core\CompressableExternalModule
 
         // Render template with sign in form
         $this->html($this->view('www/signin/signin_form.vphp')->output())
-             ->title(t('Авторизация', true));
+            ->title(t('Авторизация', true));
     }
 
     /** User asynchronous sign in */
     public function __async_login()
     {
-        $user  = null;
+        $user = null;
         $error = '';
 
         if (isset($_POST['email']) && isset($_POST['password'])) {
-            $email    = $this->social->hash($_POST['email']);
+            $email = $this->social->hash($_POST['email']);
             $password = $this->social->hash($_POST['password']);
             $remember = isset($_POST['remember']) ? true : false;
 
@@ -169,10 +168,10 @@ class Application extends \samson\core\CompressableExternalModule
                 return array('status' => '1');
             } else {
                 $error .= $this->view('www/signin/signin_form.vphp')
-                               ->errorClass('errorAuth')
-                               ->userEmail("{$_POST['email']}")
-                               ->focus('autofocus')
-                               ->output();
+                    ->errorClass('errorAuth')
+                    ->userEmail("{$_POST['email']}")
+                    ->focus('autofocus')
+                    ->output();
 
                 return array('status' => '0', 'html' => $error);
             }
@@ -199,7 +198,7 @@ class Application extends \samson\core\CompressableExternalModule
     {
         if (isset($_POST['email'])) {
             /** @var \samson\activerecord\user $user */
-            $user   = null;
+            $user = null;
             $result = '';
 
             if (!empty($user = (new UserQuery())->email($_POST['email'])->first())) {
@@ -229,10 +228,11 @@ class Application extends \samson\core\CompressableExternalModule
      */
     public function __confirm($code)
     {
-        $rights = (new UserQuery())->hashConfirm($code)->first();
-      
+        $code = substr($code, 0, 32);
+        $rights = (new UserQuery())->confirmed($code)->first();
+
         if (!empty($rights)) {
-            //$this->system->template('www/signin/signin_template.vphp');
+            $this->system->template('www/signin/signin_template.vphp');
             $this->html($this->view('www/signin/new_pass_form')->code($code)->output())
                 ->title(t('Восстановление пароля', true));
         } else {
@@ -252,7 +252,7 @@ class Application extends \samson\core\CompressableExternalModule
         ) {
             /** @var \samson\activerecord\user $user */
             $user = null;
-            if (!empty($user = (new UserQuery())->hashConfirm($code)->first())) {
+            if (!empty($user = (new UserQuery())->confirmed($code)->first())) {
                 $user->confirmed = 1;
                 $user->md5_password = md5($_POST['password']);
                 $user->hash_password = md5($_POST['password']);
