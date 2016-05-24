@@ -230,8 +230,7 @@ class Application extends \samson\core\CompressableExternalModule
     public function __confirm($code)
     {
         $rights = (new UserQuery())->hashConfirm($code)->first();
-        trace($rights, 1);
-
+      
         if (!empty($rights)) {
             //$this->system->template('www/signin/signin_template.vphp');
             $this->html($this->view('www/signin/new_pass_form')->code($code)->output())
