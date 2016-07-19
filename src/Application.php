@@ -123,6 +123,7 @@ class Application extends \samson\core\CompressableExternalModule
         $admin[$this->social->dbEmailField] = $adminUser;
         $admin[$this->social->dbHashEmailField] = $hashedEmailValue;
         $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
+        $admin->f_name = 'admin';
         $admin->group_id = 1;
         $admin->created = date('Y-m-d H:i:s');
         $admin->active = 1;
