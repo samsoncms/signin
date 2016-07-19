@@ -108,7 +108,7 @@ class Application extends \samson\core\CompressableExternalModule
         $adminUser = 'admin@admin.com';
         $hashedEmailValue = $this->social->hash($adminUser);
 
-        /** @var \samson\activerecord\user $admin Try to find generic user */
+        /** @var \samsoncms\api\generated\User $admin Try to find generic user */
         $admin = $this->query
             ->entity($this->social->dbTable)
             ->where($this->social->dbEmailField, $adminUser)
@@ -123,8 +123,11 @@ class Application extends \samson\core\CompressableExternalModule
         $admin[$this->social->dbEmailField] = $adminUser;
         $admin[$this->social->dbHashEmailField] = $hashedEmailValue;
         $admin[$this->social->dbHashPasswordField] = $hashedEmailValue;
-        $admin->f_name = 'admin';
-        $admin->group_id = 1;
+        $admin->fName = 'admin';
+        $admin->sName = '';
+        $admin->tName = '';
+        $admin->groupId = 1;
+        $admin->system = 1;
         $admin->created = date('Y-m-d H:i:s');
         $admin->active = 1;
         $admin->save();
