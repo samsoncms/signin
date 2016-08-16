@@ -18,6 +18,7 @@ use samsonphp\event\Event;
 use samsonframework\orm\QueryInterface;
 use samson\social\email\Email;
 use samson\core\Core;
+use samsonphp\compressor\Compressor;
 
 /**
  * Generic class for user sign in
@@ -62,9 +63,15 @@ class Application extends \samson\core\CompressableExternalModule
         $this->request = url();
         // Old applications main page rendering
         Event::subscribe(\samsoncms\cms\Application::EVENT_IS_CMS, array($this, 'authorize'));
+        
+        Event::subscribe(Compressor::E_CREATE_MODULE_LIST, array($this, 'getModuleList'));
 
-        //[PHPCOMPRESSOR(remove,start)]
-
+        // Call parent initialization
+        return parent::init($params);
+    }
+    
+    public function getModuleList(& $moduleListArray)
+    {
         $moduleList = array();
         foreach ($this->system->module_stack as $id => $module) {
             if (isset($module->composerParameters['composerName'])) {
@@ -74,13 +81,7 @@ class Application extends \samson\core\CompressableExternalModule
             }
         }
         $moduleList[$this->id] = $this;
-
-        // Generate resources for new module
-        $this->system->module('resourcer')->generateResources($moduleList, $this->path() . 'www/signin/signin_template.vphp');
-        //[PHPCOMPRESSOR(remove,end)]
-
-        // Call parent initialization
-        return parent::init($params);
+        $moduleListArray[$this->path().'www/signin/signin_template.vphp'] = $moduleList;
     }
 
     /**
