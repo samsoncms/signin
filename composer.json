@@ -7,7 +7,8 @@
     "samsonos/php_url": "*",
     "samsonos/social_core": "*",
     "samsonos/social_email": "*",
-    "samsonos/js_core": "*"
+    "samsonos/js_core": "*",
+    "samsonos/php_jquery": "*"
   },
   "require-dev": {
     "behat/behat": "3.*@stable",
