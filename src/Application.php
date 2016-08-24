@@ -97,7 +97,7 @@ class Application extends \samson\core\CompressableExternalModule
 
         // Inject dependencies
         $this->social = $this->system->module('socialemail');
-        $this->request = $this->system->module('samsonosphp_url');
+        $this->request = $this->system->module('samsonos_php_url');
         $this->query = new dbQuery();
     }
 
@@ -148,7 +148,7 @@ class Application extends \samson\core\CompressableExternalModule
         $this->system->template('www/signin/signin_template.vphp');
 
         // Render template with sign in form
-        $this->html($this->view('www/signin/signin_form.vphp')->output())
+        $this->html($this->view('www/signin/signin_form')->output())
             ->title(t('Авторизация', true));
     }
 
