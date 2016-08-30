@@ -1,5 +1,5 @@
 <?php
-namespace samson\cms\signin;
+namespace samson\cms\signin\i18n;
 
 use samsonphp\i18n\IDictionary;
 

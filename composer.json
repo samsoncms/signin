@@ -19,9 +19,9 @@
   "license": "Open Software License (OSL) v 3.0",
   "homepage": "http://samsonos.com/",
   "autoload": {
-    "classmap": ["src/"],
     "psr-4": {
-      "samsoncms\\app\\signin\\": "src/"
+      "samsoncms\\app\\signin\\": "src/",
+      "samsoncms\\app\\signin\\i18n\\": "src/",
     }
   },
   "config": {

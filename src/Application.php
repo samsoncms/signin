@@ -10,7 +10,9 @@ namespace samsoncms\app\signin;
 use samson\activerecord\dbQuery;
 use samson\cms\CMS;
 use samson\social\email\EmailStatus;
+use samson\url\URL;
 use samsoncms\api\generated\UserQuery;
+use samsonframework\containerannotation\InjectArgument;
 use samsonframework\core\RequestInterface;
 use samsonframework\core\ResourcesInterface;
 use samsonframework\core\SystemInterface;
@@ -90,6 +92,7 @@ class Application extends \samson\core\CompressableExternalModule
      * @param string $path
      * @param ResourcesInterface $resources
      * @param SystemInterface $system
+     *
      */
     public function __construct($path, ResourcesInterface $resources, SystemInterface $system)
     {
@@ -99,6 +102,9 @@ class Application extends \samson\core\CompressableExternalModule
         $this->social = $this->system->module('socialemail');
         $this->request = $this->system->module('samsonos_php_url');
         $this->query = new dbQuery();
+//        $this->social = $socialEmail;
+//        $this->request = $request;
+//        $this->query = $query;
     }
 
     //[PHPCOMPRESSOR(remove,start)]
