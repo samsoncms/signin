@@ -95,7 +95,7 @@ class Application extends \samson\core\CompressableExternalModule
      *
      * @InjectArgument(socialEmail="\samson\social\email\Email")
      * @InjectArgument(request="\samson\url\URL")
-     * @InjectArgument(queryInterface="\samson\activerecord\dbQuery")
+     * @InjectArgument(queryInterface="\samsonframework\orm\QueryInterface")
      *
      * @InjectArgument(resources="\samsonframework\core\ResourcesInterface")
      * @InjectArgument(system="\samsonframework\core\SystemInterface")
