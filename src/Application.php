@@ -93,18 +93,24 @@ class Application extends \samson\core\CompressableExternalModule
      * @param ResourcesInterface $resources
      * @param SystemInterface $system
      *
+     * @InjectArgument(socialEmail="\samson\social\email\Email")
+     * @InjectArgument(request="\samson\url\URL")
+     * @InjectArgument(queryInterface="\samson\activerecord\dbQuery")
+     *
+     * @InjectArgument(resources="\samsonframework\core\ResourcesInterface")
+     * @InjectArgument(system="\samsonframework\core\SystemInterface")
      */
-    public function __construct($path, ResourcesInterface $resources, SystemInterface $system)
+    public function __construct(Email $socialEmail, URL $request, QueryInterface $queryInterface, ResourcesInterface $resources, SystemInterface $system)
     {
-        parent::__construct($path, $resources, $system);
+        parent::__construct(realpath(__DIR__ . '/../'), $resources, $system);
 
         // Inject dependencies
-        $this->social = $this->system->module('socialemail');
-        $this->request = $this->system->module('samsonos_php_url');
-        $this->query = new dbQuery();
-//        $this->social = $socialEmail;
-//        $this->request = $request;
-//        $this->query = $query;
+//        $this->social = $this->system->module('socialemail');
+//        $this->request = $this->system->module('samsonos_php_url');
+//        $this->query = new dbQuery();
+        $this->social = $socialEmail;
+        $this->request = $request;
+        $this->query = $queryInterface;
     }
 
     //[PHPCOMPRESSOR(remove,start)]
