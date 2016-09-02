@@ -129,7 +129,7 @@ class Application extends \samson\core\CompressableExternalModule
 
         // Create user record if missing
         if (!isset($admin)) {
-            $admin = new $this->social->dbTable();
+            $admin = new $this->social->dbTable($this->system->getContainer()->getDatabase());
         }
 
         // Fill in user credentials according to config
