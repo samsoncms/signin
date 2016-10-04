@@ -12,6 +12,7 @@ use samson\cms\CMS;
 use samson\social\email\EmailStatus;
 use samson\url\URL;
 use samsoncms\api\generated\UserQuery;
+use samsonframework\container\definition\analyzer\annotation\annotation\InjectService;
 use samsonframework\containerannotation\InjectArgument;
 use samsonframework\core\RequestInterface;
 use samsonframework\core\ResourcesInterface;
@@ -60,6 +61,14 @@ class Application extends \samson\core\CompressableExternalModule
         }
     }
 
+    /**
+     * @InjectService(core="core")
+     */
+    public function test($core)
+    {
+
+    }
+
     public function init(array $params = array())
     {
         $this->request = url();
@@ -93,14 +102,14 @@ class Application extends \samson\core\CompressableExternalModule
      * @param ResourcesInterface $resources
      * @param SystemInterface $system
      *
-     * @InjectArgument(socialEmail="\samson\social\email\Email")
-     * @InjectArgument(request="\samson\url\URL")
-     * @InjectArgument(queryInterface="\samsonframework\orm\QueryInterface")
+     * @ InjectArgument(socialEmail="samson\social\email\Email")
+     * @ InjectArgument(request="samson\url\URL")
+     * @ InjectArgument(queryInterface="samsonframework\orm\QueryInterface")
      *
-     * @InjectArgument(resources="\samsonframework\core\ResourcesInterface")
-     * @InjectArgument(system="\samsonframework\core\SystemInterface")
+     * @ InjectArgument(resources="samsonframework\core\ResourcesInterface")
+     * @ InjectArgument(system="samsonframework\core\SystemInterface")
      */
-    public function __construct(Email $socialEmail, URL $request, QueryInterface $queryInterface, ResourcesInterface $resources, SystemInterface $system)
+    public function __construct($path, Email $socialEmail, URL $request, QueryInterface $queryInterface, ResourcesInterface $resources, SystemInterface $system)
     {
         parent::__construct(realpath(__DIR__ . '/../'), $resources, $system);
 
@@ -129,7 +138,7 @@ class Application extends \samson\core\CompressableExternalModule
 
         // Create user record if missing
         if (!isset($admin)) {
-            $admin = new $this->social->dbTable($this->system->getContainer()->getDatabase());
+            $admin = new $this->social->dbTable($this->system->getContainer()->get('database'));
         }
 
         // Fill in user credentials according to config
